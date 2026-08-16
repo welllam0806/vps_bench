@@ -23,8 +23,10 @@ IPERF_TIME=10          # 每次 iperf3 测试时长(秒)
 RUN_COUNT=10           # 每个 线程 组合的测试次数
 MULTI_PARALLEL=8       # 多线程并发数(可交互覆盖)
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-OUT_DIR="$SCRIPT_DIR/result"
+# 用当前工作目录作为结果存放位置。
+# 注意: 不能用 $SCRIPT_DIR (脚本所在目录)——用 bash <(curl ...) 一行式运行时
+# 脚本位于 /dev/fd 伪文件系统, 无法创建子目录, 会报 mkdir: /dev/fd/result
+OUT_DIR="$PWD/result"
 
 # ---------- 输出工具 ----------
 die()  { echo -e "\033[31m[错误] $*\033[0m" >&2; exit 1; }
