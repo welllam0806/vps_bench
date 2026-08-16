@@ -1,0 +1,3 @@
+# 忽略敏感文件
+.gh_token
+result/
