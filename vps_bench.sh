@@ -19,8 +19,8 @@ set -euo pipefail
 # ---------- 配置 ----------
 PORT=5201              # 国外 VPS 的 iperf3 服务端口
 PING_COUNT=20          # ping 次数
-IPERF_TIME=10          # 每次 iperf3 测试时长(秒)
-RUN_COUNT=10           # 每个 线程 组合的测试次数
+IPERF_TIME=5           # 每次 iperf3 测试时长(秒)
+RUN_COUNT=3            # 每个 线程 组合的测试次数
 MULTI_PARALLEL=8       # 多线程并发数(可交互覆盖)
 
 # 用当前工作目录作为结果存放位置。

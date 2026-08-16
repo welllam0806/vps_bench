@@ -69,8 +69,8 @@ ping (最低/平均/最高)      : 149.2ms / 150.2ms / 153.2ms
 |------|--------|------|
 | `PORT` | 5201 | iperf3 服务端口 |
 | `PING_COUNT` | 20 | ping 次数 |
-| `IPERF_TIME` | 10 | 每次 iperf3 测试时长（秒） |
-| `RUN_COUNT` | 10 | 每个组合的测试次数 |
+| `IPERF_TIME` | 5 | 每次 iperf3 测试时长（秒） |
+| `RUN_COUNT` | 3 | 每个组合的测试次数 |
 | `MULTI_PARALLEL` | 8 | 多线程并发数（可运行时覆盖） |
 
 ## License
