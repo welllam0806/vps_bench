@@ -182,16 +182,14 @@ main() {
   multi_res=$(echo "$out" | grep '^RESULT|下载多线程|' | cut -d'|' -f3)
 
   echo "============================================================"
-  echo "                测试结果汇总"
+  echo "=== 最终结果 ==="
+  # 按用户要求恢复紧凑单行格式
+  echo "$IP: ping $PING_MIN $PING_MAX $PING_AVG  下载单线 $single_res  下载多线 $multi_res  路由: $OUT_DIR/route_${IP}.txt"
   echo "============================================================"
-  echo "目标 IP        : $IP"
-  echo "去程路由        : 见上方 nexttrace 输出, 已存档 $OUT_DIR/route_${IP}.txt"
-  echo "------------------------------------------------------------"
-  echo "ping (最低/平均/最高)      : ${PING_MIN}ms / ${PING_AVG}ms / ${PING_MAX}ms"
-  echo "------------------------------------------------------------"
-  echo "下载单线程 (最低/最高/平均): $single_res"
-  echo "下载多线程 (最低/最高/平均): $multi_res"
-  echo "============================================================"
+
+  # 追加到汇总文件
+  echo "$(date +%Y-%m-%d_%H:%M) $IP ping:${PING_MIN}/${PING_MAX}/${PING_AVG}ms 单线程:${single_res}Mbps 多线程:${multi_res}Mbps 路由:$OUT_DIR/route_${IP}.txt" >> "$PWD/vps_bench_results.txt"
+  echo "结果已追加到 $PWD/vps_bench_results.txt"
 }
 
 main "$@"
