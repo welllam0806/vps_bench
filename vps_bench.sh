@@ -160,6 +160,13 @@ PY
 main() {
   [[ $EUID -eq 0 ]] || die "请以 root 运行 (nexttrace 需要 root 权限)"
 
+  # 可选参数: --add-to-bench-summary /path/to/bench-summary
+  BENCH_SUMMARY_DIR=""
+  if [[ $# -ge 2 ]] && [[ "$1" == "--add-to-bench-summary" ]]; then
+    BENCH_SUMMARY_DIR="$2"
+    info "将自动追加结果到 $BENCH_SUMMARY_DIR/data.js"
+  fi
+
   install_deps
   ask_ip
 
@@ -190,6 +197,27 @@ main() {
   # 追加到汇总文件
   echo "$(date +%Y-%m-%d_%H:%M) $IP ping:${PING_MIN}/${PING_MAX}/${PING_AVG}ms 单线程:${single_res}Mbps 多线程:${multi_res}Mbps 路由:$OUT_DIR/route_${IP}.txt" >> "$PWD/vps_bench_results.txt"
   echo "结果已追加到 $PWD/vps_bench_results.txt"
+
+  # 如果指定了 --add-to-bench-summary，自动追加到 bench-summary/data.js
+  if [[ -n "$BENCH_SUMMARY_DIR" ]]; then
+    if [[ ! -f "$BENCH_SUMMARY_DIR/data.js" ]]; then
+      die "找不到 $BENCH_SUMMARY_DIR/data.js，请确认路径正确"
+    fi
+    # 让用户输入测试名称
+    local test_name
+    read -rp "请输入本次测试名称(如 DMIT洛杉矶): " test_name
+    test_name="${test_name:-$(date +%Y-%m-%d_测试)}"
+    local test_time="$(date +%Y-%m-%d %H:%M) CST"
+    local test_date="$(date +%Y-%m-%d)"
+
+    # 构造JSON条目，插入到 data.js 数组
+    local entry="\n  {\n    \"date\": \"$test_date\",\n    \"name\": \"$test_name\",\n    \"ip\": \"$IP\",\n    \"time\": \"$test_time\",\n    \"sd\": [\n      {\n        \"Name\": \"自定义目标($IP)\",\n        \"Host\": \"$IP\",\n        \"PingMin\": \"$PING_MIN\",\n        \"PingAvg\": \"$PING_AVG\",\n        \"PingMax\": \"$PING_MAX\",\n        \"DownloadSingle\": \"${single_res%% *}\",\n        \"DownloadMulti\": \"${multi_res%% *}\"\n      }\n    ],\n    \"reports\": []\n  },"
+
+    # 插入到数组倒数第二行
+    sed -i "\$i $entry" "$BENCH_SUMMARY_DIR/data.js"
+    ok "已成功追加测试记录到 $BENCH_SUMMARY_DIR/data.js"
+    echo "最后一步: cd $BENCH_SUMMARY_DIR && git add data.js && git commit -m \"add: $test_name\" && git push"
+  fi
 }
 
 main "$@"
