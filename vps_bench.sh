@@ -184,8 +184,9 @@ main() {
 
   echo "============================================================"
   echo "=== 最终结果 ==="
-  # 按用户要求恢复紧凑单行格式
-  echo "$IP: ping 最低${PING_MIN}ms 平均${PING_AVG}ms 最高${PING_MAX}ms  下载单线 $single_res  下载多线 $multi_res"
+  echo "$IP: ping 最低${PING_MIN}ms 平均${PING_AVG}ms 最高${PING_MAX}ms"
+  echo "下载单线: $single_res"
+  echo "下载多线: $multi_res"
   echo "============================================================"
 
   # 追加到汇总文件
