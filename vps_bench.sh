@@ -194,10 +194,6 @@ main() {
   echo "下载多线程 (最低/最高/平均): $multi_res"
   echo "============================================================"
 
-  # 追加到汇总文件
-  echo "$(date +%Y-%m-%d_%H:%M) $IP ping:${PING_MIN}/${PING_AVG}/${PING_MAX}ms 单线程:${single_res}Mbps 多线程:${multi_res}Mbps" >> "$PWD/vps_bench_results.txt"
-  echo "结果已追加到 $PWD/vps_bench_results.txt"
-
   # 如果指定了 --add-to-bench-summary，自动追加到 bench-summary/data.js
   if [[ -n "$BENCH_SUMMARY_DIR" ]]; then
     if [[ ! -f "$BENCH_SUMMARY_DIR/data.js" ]]; then
