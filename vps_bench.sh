@@ -23,11 +23,6 @@ IPERF_TIME=5           # 每次 iperf3 测试时长(秒)
 RUN_COUNT=3            # 每个 线程 组合的测试次数
 MULTI_PARALLEL=8       # 多线程并发数(可交互覆盖)
 
-# 用当前工作目录作为结果存放位置。
-# 注意: 不能用 $SCRIPT_DIR (脚本所在目录)——用 bash <(curl ...) 一行式运行时
-# 脚本位于 /dev/fd 伪文件系统, 无法创建子目录, 会报 mkdir: /dev/fd/result
-OUT_DIR="$PWD/result"
-
 # ---------- 输出工具 ----------
 die()  { echo -e "\033[31m[错误] $*\033[0m" >&2; exit 1; }
 info() { echo -e "\033[36m[信息] $*\033[0m"; }
@@ -95,8 +90,7 @@ do_nexttrace() {
     [[ -z "$NT" ]] && die "nexttrace 安装失败"
   fi
   ok "nexttrace 就绪，开始去程路由检测..."
-  mkdir -p "$OUT_DIR"
-  "$NT" "$IP" 2>&1 | tee "$OUT_DIR/route_${IP}.txt"
+  "$NT" "$IP" 2>&1
   echo
 }
 
@@ -191,11 +185,11 @@ main() {
   echo "============================================================"
   echo "=== 最终结果 ==="
   # 按用户要求恢复紧凑单行格式
-  echo "$IP: ping $PING_MIN $PING_MAX $PING_AVG  下载单线 $single_res  下载多线 $multi_res  路由: $OUT_DIR/route_${IP}.txt"
+  echo "$IP: ping 最低${PING_MIN}ms 平均${PING_AVG}ms 最高${PING_MAX}ms  下载单线 $single_res  下载多线 $multi_res"
   echo "============================================================"
 
   # 追加到汇总文件
-  echo "$(date +%Y-%m-%d_%H:%M) $IP ping:${PING_MIN}/${PING_MAX}/${PING_AVG}ms 单线程:${single_res}Mbps 多线程:${multi_res}Mbps 路由:$OUT_DIR/route_${IP}.txt" >> "$PWD/vps_bench_results.txt"
+  echo "$(date +%Y-%m-%d_%H:%M) $IP ping:${PING_MIN}/${PING_AVG}/${PING_MAX}ms 单线程:${single_res}Mbps 多线程:${multi_res}Mbps" >> "$PWD/vps_bench_results.txt"
   echo "结果已追加到 $PWD/vps_bench_results.txt"
 
   # 如果指定了 --add-to-bench-summary，自动追加到 bench-summary/data.js
